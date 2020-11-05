@@ -6,17 +6,64 @@
     <title>US Energy Consumption</title>
     <link rel="stylesheet" href="css/style.css">
     <script type="application/javascript">
-        // `year` and total counts for entire US => set these variables equal to appropriate value
-        //   * these variables will be defined and accessible from any script loaded after this one
         var year;
         var coal_count;
         var natural_gas_count;
         var nuclear_count;
         var petroleum_count;
         var renewable_count;
+
+        var prev = "prev";
+        var next = "next";
+
+        /*function getNewYear(new_year) {
+            year = parseInt(year);
+            if (new_year == "prev"){
+                year --;
+            }else if (new_year == "next"){
+                year++;
+            }
+            url = 'http://localhost8000/year/' + year;
+            console.log("" , year);
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Typical action to be performed when the document is ready:
+                    document.write(xhttp.responseText);
+                }
+                };
+            xhttp.open("GET", url, true);
+            xhttp.send();
+        };*/
     </script>
 </head>
 <body>
     <!-- create template here -->
+    <div>
+        <!--<button onclick="getNewYear(prev)">Previous Year</button>
+        <h2></h2>
+        <button onclick="getNewYear(prev)">Next Year</button>-->
+        <button><a target="self" href=prevbutton>Previous Year</a></button>
+        <h2>insert_year</h2>
+        <button><a target="self" href=nextbutton>Previous Year</a></button>
+    </div>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                <th>State</th>
+                <th>Coal</th>
+                <th>Natural Gas</th>
+                <th>Nuclear</th>
+                <th>Petroleum</th>
+                <th>Renewable</th>
+                <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                replace
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
