@@ -115,7 +115,6 @@ app.get('/year/:selected_year', (req, res) => {
 
 // GET request handler for '/state/*'
 app.get('/state/:selected_state', (req, res) => {
-
     console.log(req.params.selected_state);
     fs.readFile(path.join(template_dir, 'state.html'), (err, template) => {
         
@@ -125,7 +124,11 @@ app.get('/state/:selected_state', (req, res) => {
         }
         else{
             //Query
-            let sql = 'select * from Consumption inner join States on Consumption.state_abbreviation=States.state_abbreviation where Consumption.state_abbreviation="'+req.params.selected_state + '" order by year desc';
+            let sql = 'select * ' + 
+                      'from Consumption ' + 
+                      'inner join States on Consumption.state_abbreviation = States.state_abbreviation ' + 
+                      'where Consumption.state_abbreviation = "' + req.params.selected_state + '" ' + 
+                      'order by year desc';
             
             //Query request to database
             db.all(sql,[],(err,rows) => {
@@ -142,6 +145,7 @@ app.get('/state/:selected_state', (req, res) => {
                     let nuc_count = 0;
                     let pat_count = 0;
                     let ren_count = 0;
+                    let total = 0;
                     /*Query loop: accessing row obj = '.' then 'year','state_abbreviation','coal','natural_gas',
                                                                'petroleum','renewable','state_name'*/
                     rows.forEach((row)=>{
@@ -152,7 +156,7 @@ app.get('/state/:selected_state', (req, res) => {
                         nuc_count += row.nuclear;
                         pat_count += row.petroleum;
                         ren_count += row.renewable;
-                        total = coal_count + gas_count + nuc_count + pat_count + ren_count;
+                        total = row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable;
 
                         //HTML table additions to template
                         let tbl_row = "<tr><td>" + row.year + "</td>"
@@ -166,10 +170,12 @@ app.get('/state/:selected_state', (req, res) => {
                         //!Important: html.replace returns a value, needs to be stored
                         html = html.replace("replace", tbl_row);
                     });
+
                     //Replace statements to fill rest of template
                     let state_indx = states.indexOf(req.params.selected_state);
                     let prev_state = states[state_indx - 1];
                     let next_state = states[state_indx + 1];
+
                     if ((state_indx - 1) < 0){
                         prev_state = states[50];
                         console.log("prev state" + prev_state);
@@ -178,12 +184,15 @@ app.get('/state/:selected_state', (req, res) => {
                         next_state = states[0];
                         console.log("next state: " + next_state);
                     }
+
                     html = html.replace("coal_count", "coal_count=" + coal_count);
                     html = html.replace("natural_gas_count", "natural_gas_count=" + gas_count);
                     html = html.replace("nuclear_count", "nuclear_count=" + nuc_count);
                     html = html.replace("petroleum_count", "petroleum_count=" + pat_count);
                     html = html.replace("renewable_count", "renewable_count=" + ren_count);
                     html = html.replace("insert_state", state_name);
+                    html = html.replace("insert_src", "\"/images/states/" + state_name + ".jpg\"");
+                    html = html.replace("insert_alt", "\"" + state_name + "\"");
                     html = html.replace("prevbutton", "\"/state/" + prev_state + "\"");
                     html = html.replace("nextbutton", "\"/state/" + next_state + "\"");
                     html = html.replace("replace", "");
@@ -192,8 +201,7 @@ app.get('/state/:selected_state', (req, res) => {
                     res.status(200).type('html').send(buf);
                 }
             });
-        }       
-        
+        }
     });
 });
 

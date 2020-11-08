@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>US Energy Consumption</title>
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-ui.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-exports.min.js"></script>
+    <link href="https://cdn.anychart.com/releases/v8/css/anychart-ui.min.css" type="text/css" rel="stylesheet">
+    <link href="https://cdn.anychart.com/releases/v8/fonts/css/anychart-font.min.css" type="text/css" rel="stylesheet">
     <script type="application/javascript">
         var year;
         var coal_count;
@@ -15,6 +20,120 @@
 
         var prev = "prev";
         var next = "next";
+    </script>
+    <style type="text/css">
+        html,
+        body,
+        #container {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script>
+        anychart.onDocumentReady(function () {
+            // create data set
+            var dataSet = anychart.data.set([
+                ['1960', 131265, 186121, 1000, 381283, 34957],
+                ['1961', 130948, 199324, 10000, 374735, 32478],
+                ['1962', 131206, 221625, 100000, 391131, 34382],
+                ['1963', 138716, 218609, 150000, 397851, 32328],
+                ['1964', 156354, 236502, 200000, 401486, 33210]
+            ]);
+
+            // map data for the first series, take x from the zero area and value from the first area of data set
+            var firstSeriesData = dataSet.mapAs({ x: 0, value: 1 });
+
+            // map data for the second series, take x from the zero area and value from the second area of data set
+            var secondSeriesData = dataSet.mapAs({ x: 0, value: 2 });
+
+            // map data for the second series, take x from the zero area and value from the third area of data set
+            var thirdSeriesData = dataSet.mapAs({ x: 0, value: 3 });
+
+            // map data for the fourth series, take x from the zero area and value from the fourth area of data set
+            var fourthSeriesData = dataSet.mapAs({ x: 0, value: 4 });
+
+            // map data for the fifth series, take x from the zero area and value from the fifth area of data set
+            var fifthSeriesData = dataSet.mapAs({ x: 0, value: 5 });
+
+            // create bar chart
+            var chart = anychart.area();
+
+            // turn on chart animation
+            chart.animation(true);
+
+            // force chart to stack values by Y scale.
+            chart.yScale().stackMode('percent');
+
+            var crosshair = chart.crosshair();
+            // turn on the crosshair
+            crosshair.enabled(true).yStroke(null).xStroke('#fff').zIndex(99);
+            crosshair.yLabel().enabled(false);
+            crosshair.xLabel().enabled(false);
+
+            // set chart title text settings
+            chart.title('Energy consumption by state');
+            chart.title().padding([0, 0, 10, 0]);
+
+            // set yAxis labels formatting, force it to add % to values
+            chart.yAxis(0).labels().format('{%Value}%');
+
+            // helper function to setup label settings for all series
+            var setupSeries = function (series, name) {
+                series
+                    .name(name)
+                    .stroke('3 #fff 1')
+                    .fill(function () {
+                        return this.sourceColor + ' 0.8';
+                    });
+                series.markers().zIndex(100);
+                series.hovered().stroke('3 #fff 1');
+                series
+                    .hovered()
+                    .markers()
+                    .enabled(true)
+                    .type('circle')
+                    .size(5)
+                    .stroke('1.5 #fff');
+            };
+
+            // temp variable to store series instance
+            var series;
+
+            // create first series with mapped data
+            series = chart.area(firstSeriesData);
+            setupSeries(series, 'Coal');
+
+            // create second series with mapped data
+            series = chart.area(secondSeriesData);
+            setupSeries(series, 'Natural Gas');
+
+            // create third series with mapped data
+            series = chart.area(thirdSeriesData);
+            setupSeries(series, 'Nuclear');
+
+            // create fourth series with mapped data
+            series = chart.area(fourthSeriesData);
+            setupSeries(series, 'Petroleum');
+
+            // create fifth series with mapped data
+            series = chart.area(fifthSeriesData);
+            setupSeries(series, 'Renewable');
+
+            // set interactivity and toolitp settings
+            chart.interactivity().hoverMode('by-x');
+            chart.tooltip().displayMode('union');
+
+            // turn on legend
+            chart.legend().enabled(true).fontSize(13).padding([0, 0, 25, 0]);
+
+            // set container id for the chart
+            chart.container('graph_container');
+
+            // initiate chart drawing
+            chart.draw();
+        });
     </script>
 </head>
 <body>
@@ -27,6 +146,7 @@
     <div>
         <button><a target="_self" href=prevbutton>Previous State</a></button>
         <h2>insert_state</h2>
+        <img src=insert_src alt=insert_alt>
         <button><a target="_self" href=nextbutton>Next State</a></button>
     </div>
     <div>
@@ -47,6 +167,7 @@
             </tbody>
         </table>
     </div>
+    <div id="graph_container" style="width: 500px; height: 400px;"></div>
 </body>
 </html>
 
