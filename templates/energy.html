@@ -6,13 +6,42 @@
     <title>US Energy Consumption</title>
     <link rel="stylesheet" href="css/style.css">
     <script type="application/javascript">
-        // `energy_type` and object of consumption per year per state => set these variables equal to appropriate value
-        //   * these variables will be defined and accessible from any script loaded after this one
-        var energy_type;
-        var energy_counts;  // e.g. {AK: [...], AL: [...], AR: [...], ...}
+        var year;
+        var coal_count;
+        var natural_gas_count;
+        var nuclear_count;
+        var petroleum_count;
+        var renewable_count;
+
+        var prev = "prev";
+        var next = "next";
     </script>
 </head>
 <body>
+    <!--Will be the navigation bar-->
+    <div>
+        <button><a target="_self" href="/state/MN">State</a></button>
+        <button><a target="_self" href="/year/2018">Year</a></button>
+    </div>
     <!-- create template here -->
+    <div>
+        <button><a target="_self" href=prevbutton>Previous Source</a></button>
+        <h2>energy_source</h2>
+        <button><a target="_self" href=nextbutton>Next Source</a></button>
+    </div>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                <th>Year</th>
+                heading
+                </tr>
+            </thead>
+            <tbody>
+            replace
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
+
