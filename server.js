@@ -128,7 +128,7 @@ app.get('/state/:selected_state', (req, res) => {
                       'from Consumption ' + 
                       'inner join States on Consumption.state_abbreviation = States.state_abbreviation ' + 
                       'where Consumption.state_abbreviation = "' + req.params.selected_state + '" ' + 
-                      'order by year desc';
+                      'order by year asc';
             
             //Query request to database
             db.all(sql,[],(err,rows) => {
@@ -149,17 +149,13 @@ app.get('/state/:selected_state', (req, res) => {
                     /*Query loop: accessing row obj = '.' then 'year','state_abbreviation','coal','natural_gas',
                                                                'petroleum','renewable','state_name'*/
                     rows.forEach((row)=>{
-                        state_name = row.state_name;
-                        year = row.year;
-                        coal_count += row.coal;
-                        gas_count += row.natural_gas;
-                        nuc_count += row.nuclear;
-                        pat_count += row.petroleum;
-                        ren_count += row.renewable;
                         total = row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable;
 
+                        //HTML script additions to template
+                        let graph_data = "[" + row.year + ", " + row.coal + ", " + row.natural_gas + ", " + row.nuclear + ", " + row.petroleum + ", " + row.renewable + "], insert_data"
+
                         //HTML table additions to template
-                        let tbl_row = "<tr><td>" + row.year + "</td>"
+                        let tbl_row = "<tr><td>" + row.year + "</td>";
                         tbl_row += "<td>" + row.coal + "</td>";
                         tbl_row += "<td>" + row.natural_gas + "</td>";
                         tbl_row += "<td>" + row.nuclear + "</td>";
@@ -168,6 +164,7 @@ app.get('/state/:selected_state', (req, res) => {
                         tbl_row += "<td>" + total + "</td></tr>replace";
 
                         //!Important: html.replace returns a value, needs to be stored
+                        html = html.replace("insert_data", graph_data);
                         html = html.replace("replace", tbl_row);
                     });
 
@@ -185,16 +182,12 @@ app.get('/state/:selected_state', (req, res) => {
                         console.log("next state: " + next_state);
                     }
 
-                    html = html.replace("coal_count", "coal_count=" + coal_count);
-                    html = html.replace("natural_gas_count", "natural_gas_count=" + gas_count);
-                    html = html.replace("nuclear_count", "nuclear_count=" + nuc_count);
-                    html = html.replace("petroleum_count", "petroleum_count=" + pat_count);
-                    html = html.replace("renewable_count", "renewable_count=" + ren_count);
-                    html = html.replace("insert_state", state_name);
-                    html = html.replace("insert_src", "\"/images/states/" + state_name + ".jpg\"");
-                    html = html.replace("insert_alt", "\"" + state_name + "\"");
+                    html = html.replace("insert_state", req.params.selected_state);
+                    html = html.replace("insert_src", "\"/images/states/" + req.params.selected_state + ".jpg\"");
+                    html = html.replace("insert_alt", "\"" + req.params.selected_state + "\"");
                     html = html.replace("prevbutton", "\"/state/" + prev_state + "\"");
                     html = html.replace("nextbutton", "\"/state/" + next_state + "\"");
+                    html = html.replace(", insert_data", "");
                     html = html.replace("replace", "");
 
                     var buf = Buffer.from(html, 'utf8');
