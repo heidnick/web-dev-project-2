@@ -5,16 +5,675 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>US Energy Consumption</title>
     <link rel="stylesheet" href="css/style.css">
-    <script type="application/javascript">
-        var year;
-        var coal_count;
-        var natural_gas_count;
-        var nuclear_count;
-        var petroleum_count;
-        var renewable_count;
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-ui.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-exports.min.js"></script>
+    <link href="https://cdn.anychart.com/releases/v8/css/anychart-ui.min.css" type="text/css" rel="stylesheet">
+    <link href="https://cdn.anychart.com/releases/v8/fonts/css/anychart-font.min.css" type="text/css" rel="stylesheet">
+    <style type="text/css">
+        html,
+        body,
+        #graph_container {
+            width: 100%;
+            height: 400px;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script>
+        /*
+        anychart.onDocumentReady(function () {
+            let states = ['AK','AL','AR','AZ','CA','CO','CT','DC','DE','FL','GA','HI',
+                            'IA','ID','IL','IN','KS','KY','LA','MA','MD','ME','MI','MN',
+                            'MO','MS','MT','NC','ND','NE','NH','NJ','NM','NV','NY','OH',
+                            'OK','OR','PA','RI','SC','SD','TN','TX','UT','VA','VT','WA',
+                            'WI','WV','WY'];
+            
+            for (let i = 0; i < 51; i++) {
+                window['seriesData' + (i + 1)] = dataSet.mapAs({ x: 0, value: (i + 1) });
+                window['series' + (i + 1)] = 
+            }
 
-        var prev = "prev";
-        var next = "next";
+            // create data set on our data
+            var dataSet = anychart.data.set(getData());
+
+            // map data for the first series, take x from the zero column and value from the first column of data set
+            var firstSeriesData = dataSet.mapAs({ x: 0, value: 1 });
+
+            // map data for the second series, take x from the zero column and value from the second column of data set
+            var secondSeriesData = dataSet.mapAs({ x: 0, value: 2 });
+
+            // map data for the third series, take x from the zero column and value from the third column of data set
+            var thirdSeriesData = dataSet.mapAs({ x: 0, value: 3 });
+
+            // create line chart
+            var chart = anychart.line();
+
+            // turn on chart animation
+            chart.animation(true);
+
+            // set chart padding
+            chart.padding([10, 20, 5, 20]);
+
+            // turn on the crosshair
+            chart.crosshair().enabled(true).yLabel(false).yStroke(null);
+
+            // set tooltip mode to point
+            chart.tooltip().positionMode('point');
+
+            // set chart title text settings
+            chart.title('Trend of Sales of the Most Popular Products of ACME Corp.');
+
+            // set yAxis title
+            chart.yAxis().title('Number of Bottles Sold (thousands)');
+            chart.xAxis().labels().padding(5);
+
+            // create first series with mapped data
+            var firstSeries = chart.line(firstSeriesData);
+            firstSeries.name('Alaska');
+            firstSeries.hovered().markers().enabled(true).type('circle').size(4);
+            firstSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create second series with mapped data
+            var secondSeries = chart.line(secondSeriesData);
+            secondSeries.name('Alabama');
+            secondSeries.hovered().markers().enabled(true).type('circle').size(4);
+            secondSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Arkansas');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Arizona');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('California');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Colorado');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Connecticut');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('District of Columbia');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Delaware');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Florida');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Georgia');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Hawaii');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Iowa');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Idaho');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Illinois');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Indiana');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Kansas');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Kentucky');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Louisiana');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Massachusetts');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Maryland');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Maine');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Michigan');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Minnesota');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Missouri');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Mississippi');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Montana');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('North Carolina');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('North Dakota');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Nebraska');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('New Hampshire');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('New Jersey');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('New Mexico');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Nevada');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('New York');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Ohio');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Oklahoma');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Oregon');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Pennsylvania');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Rhode Island');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('South Carolina');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('South Dakota');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Tennessee');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Texas');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Utah');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Virginia');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Vermont');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Washington');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Wisconsin');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // create third series with mapped data
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('West Virginia');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            var thirdSeries = chart.line(thirdSeriesData);
+            thirdSeries.name('Wyoming');
+            thirdSeries.hovered().markers().enabled(true).type('circle').size(4);
+            thirdSeries
+                .tooltip()
+                .position('right')
+                .anchor('left-center')
+                .offsetX(5)
+                .offsetY(5);
+
+            // turn the legend on
+            chart.legend().enabled(true).fontSize(13).padding([0, 0, 10, 0]);
+
+            // set container id for the chart
+            chart.container('graph_container');
+
+            // initiate chart drawing
+            chart.draw();
+        });
+
+        function getData() {
+            return [
+                ['1986', 3.6, 2.3, 2.8],
+                ['1987', 7.1, 4.0, 4.1],
+                ['1988', 8.5, 6.2, 5.1],
+                ['1989', 9.2, 11.8, 6.5],
+                ['1990', 10.1, 13.0, 12.5],
+                ['1991', 11.6, 13.9, 18.0],
+                ['1992', 16.4, 18.0, 21.0],
+                ['1993', 18.0, 23.3, 20.3],
+                ['1994', 13.2, 24.7, 19.2],
+                ['1995', 12.0, 18.0, 14.4],
+                ['1996', 3.2, 15.1, 9.2],
+                ['1997', 4.1, 11.3, 5.9],
+                ['1998', 6.3, 14.2, 5.2],
+                ['1999', 9.4, 13.7, 4.7],
+                ['2000', 11.5, 9.9, 4.2],
+                ['2001', 13.5, 12.1, 1.2],
+                ['2002', 14.8, 13.5, 5.4],
+                ['2003', 16.6, 15.1, 6.3],
+                ['2004', 18.1, 17.9, 8.9],
+                ['2005', 17.0, 18.9, 10.1],
+                ['2006', 16.6, 20.3, 11.5],
+                ['2007', 14.1, 20.7, 12.2],
+                ['2008', 15.7, 21.6, 10],
+                ['2009', 12.0, 22.5, 8.9]
+            ];
+        }
+        */
+        var years = [insert_years];
+        var chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                
+            }
+        })
     </script>
 </head>
 <body>
@@ -42,6 +701,7 @@
             </tbody>
         </table>
     </div>
+    <div id="graph_container"></div>
 </body>
 </html>
 

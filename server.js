@@ -32,7 +32,8 @@ let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READONLY, (err) => {
     }
 });
 
-app.use(express.static(public_dir)); // serve static files from 'public' directory
+// serve static files from 'public' directory
+app.use(express.static(public_dir));
 
 
 // GET request handler for home page '/' (redirect to /year/2018)
@@ -44,64 +45,62 @@ app.get('/', (req, res) => {
 app.get('/year/:selected_year', (req, res) => {
     console.log(req.params.selected_year);
     fs.readFile(path.join(template_dir, 'year.html'), (err, template) => {
-        // modify `template` and send response
-        // this will require a query to the SQL database
-        if(req.params.selected_year < 1960 || req.params.selected_year > 2018){
+        // Error check for valid year request
+        if (req.params.selected_year < 1960 || req.params.selected_year > 2018) {
             res.status(404).type('text/plain').send("Error: no data for year " + req.params.selected_year);
-        }else{
-            let sql = 'select * from Consumption inner join States on Consumption.state_abbreviation=States.state_abbreviation where year='+req.params.selected_year;
-            //console.log(sql);
-            db.all(sql,[],(err,rows) => {
-                if (err){
+        }
+        else {
+            // Query statement
+            let sql = 'select * ' + 
+                      'from Consumption ' + 
+                      'inner join States on Consumption.state_abbreviation = States.state_abbreviation ' + 
+                      'where year = ' + req.params.selected_year;
+
+            // Query request to database
+            db.all(sql, [], (err, rows) => {
+                if (err) {
                     throw err;
-                    //console.log('could not establish connection to database');
                 }
-                else{
-                    //html contains string of year.html contents
+                else {
+                    // html contains string of year.html contents
                     let html = template.toString();
 
-                    let coal_count = 0;
-                    let gas_count = 0;
-                    let nuc_count = 0;
-                    let pat_count = 0;
-                    let ren_count = 0;
-                    rows.forEach((row)=>{
-                        coal_count += row.coal;
-                        gas_count += row.natural_gas;
-                        nuc_count += row.nuclear;
-                        pat_count += row.petroleum;
-                        ren_count += row.renewable;
-                        total = coal_count + gas_count + nuc_count + pat_count + ren_count;
-
-                        //HTML table additions to template
-                        let tbl_row = "<tr><td>" + row.state_name + "</td>"
+                    rows.forEach((row) => {
+                        let total = row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable;
+                        
+                        // HTML script additions to template
+                        let graph_data = "['";
+                        graph_data += row.state_name + "', '";
+                        graph_data += total + "'], insert_data";
+                        
+                        // HTML table additions to template
+                        let tbl_row = "<tr><td>" + row.state_name + "</td>";
                         tbl_row += "<td>" + row.coal + "</td>";
                         tbl_row += "<td>" + row.natural_gas + "</td>";
                         tbl_row += "<td>" + row.nuclear + "</td>";
                         tbl_row += "<td>" + row.petroleum + "</td>";
-                        tbl_row += "<td>" + row.renewable + "</td>"
+                        tbl_row += "<td>" + row.renewable + "</td>";
                         tbl_row += "<td>" + total + "</td></tr>replace";
 
+                        // Important: html.replace returns a value, needs to be stored
+                        html = html.replace("insert_data", graph_data);
                         html = html.replace("replace", tbl_row);
                     });
 
-                    //Replace statements to fill rest of template
                     let prev_year = req.params.selected_year - 1;
                     let next_year = (parseInt(req.params.selected_year) + 1);
-                    if(prev_year == 1959) {
+
+                    if (prev_year == 1959) {
                         prev_year = 2018;
-                    }else if(next_year == 2019){
+                    } else if (next_year == 2019) {
                         next_year = 1960;
                     }
-                    html = html.replace("year", "year=" + req.params.selected_year);
-                    html = html.replace("coal_count", "coal_count=" + coal_count);
-                    html = html.replace("natural_gas_count", "natural_gas_count=" + gas_count);
-                    html = html.replace("nuclear_count", "nuclear_count=" + nuc_count);
-                    html = html.replace("petroleum_count", "petroleum_count=" + pat_count);
-                    html = html.replace("renewable_count", "renewable_count=" + ren_count);
+                    
+                    //Replace statements to fill rest of template
                     html = html.replace("insert_year", req.params.selected_year);
                     html = html.replace("prevbutton", "\"/year/" + prev_year + "\"");
                     html = html.replace("nextbutton", "\"/year/" + next_year + "\"");
+                    html = html.replace(", insert_data", "");
                     html = html.replace("replace", "");
 
                     var buf = Buffer.from(html, 'utf8');
@@ -117,74 +116,72 @@ app.get('/year/:selected_year', (req, res) => {
 app.get('/state/:selected_state', (req, res) => {
     console.log(req.params.selected_state);
     fs.readFile(path.join(template_dir, 'state.html'), (err, template) => {
-        
-        //Error check for valid state request
-        if(!states.includes(req.params.selected_state)){
+        // Error check for valid state request
+        if (!states.includes(req.params.selected_state)) {
             res.status(404).type('text/plain').send("Error: this state is invalid: " + req.params.selected_state);
         }
-        else{
-            //Query
+        else {
+            // Query statement
             let sql = 'select * ' + 
                       'from Consumption ' + 
                       'inner join States on Consumption.state_abbreviation = States.state_abbreviation ' + 
                       'where Consumption.state_abbreviation = "' + req.params.selected_state + '" ' + 
                       'order by year asc';
             
-            //Query request to database
-            db.all(sql,[],(err,rows) => {
-                if (err){
+            // Query request to database
+            db.all(sql, [], (err, rows) => {
+                if (err) {
                     throw err;
                 }
-                else{
-                    //html is the string containing state.html contents
+                else {
+                    // html is the string containing state.html contents
                     let html = template.toString();
-                    let year = '';
                     let state_name = '';
-                    let coal_count = 0;
-                    let gas_count = 0;
-                    let nuc_count = 0;
-                    let pat_count = 0;
-                    let ren_count = 0;
-                    let total = 0;
-                    /*Query loop: accessing row obj = '.' then 'year','state_abbreviation','coal','natural_gas',
-                                                               'petroleum','renewable','state_name'*/
-                    rows.forEach((row)=>{
-                        total = row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable;
 
-                        //HTML script additions to template
-                        let graph_data = "[" + row.year + ", " + row.coal + ", " + row.natural_gas + ", " + row.nuclear + ", " + row.petroleum + ", " + row.renewable + "], insert_data"
+                    rows.forEach((row) => {
+                        state_name = row.state_name;
+                        let total = row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable;
 
-                        //HTML table additions to template
+                        // HTML script additions to template
+                        let graph_data = "[";
+                        graph_data += row.year + ", ";
+                        graph_data += row.coal + ", ";
+                        graph_data += row.natural_gas + ", ";
+                        graph_data += row.nuclear + ", ";
+                        graph_data += row.petroleum + ", ";
+                        graph_data += row.renewable + "], insert_data";
+
+                        // HTML table additions to template
                         let tbl_row = "<tr><td>" + row.year + "</td>";
                         tbl_row += "<td>" + row.coal + "</td>";
                         tbl_row += "<td>" + row.natural_gas + "</td>";
                         tbl_row += "<td>" + row.nuclear + "</td>";
                         tbl_row += "<td>" + row.petroleum + "</td>";
-                        tbl_row += "<td>" + row.renewable + "</td>"
+                        tbl_row += "<td>" + row.renewable + "</td>";
                         tbl_row += "<td>" + total + "</td></tr>replace";
 
-                        //!Important: html.replace returns a value, needs to be stored
+                        // Important: html.replace returns a value, needs to be stored
                         html = html.replace("insert_data", graph_data);
                         html = html.replace("replace", tbl_row);
                     });
 
-                    //Replace statements to fill rest of template
                     let state_indx = states.indexOf(req.params.selected_state);
                     let prev_state = states[state_indx - 1];
                     let next_state = states[state_indx + 1];
 
-                    if ((state_indx - 1) < 0){
+                    if ((state_indx - 1) < 0) {
                         prev_state = states[50];
-                        console.log("prev state" + prev_state);
+                        console.log("prev state: " + prev_state);
                     }
-                    else if((state_indx + 1) > 50){
+                    else if ((state_indx + 1) > 50) {
                         next_state = states[0];
                         console.log("next state: " + next_state);
                     }
 
-                    html = html.replace("insert_state", req.params.selected_state);
-                    html = html.replace("insert_src", "\"/images/states/" + req.params.selected_state + ".jpg\"");
-                    html = html.replace("insert_alt", "\"" + req.params.selected_state + "\"");
+                    // Replace statements to fill rest of template
+                    html = html.replace("insert_state", state_name);
+                    html = html.replace("insert_src", "\"/images/states/" + state_name + ".jpg\"");
+                    html = html.replace("insert_alt", "\"" + state_name + "\"");
                     html = html.replace("prevbutton", "\"/state/" + prev_state + "\"");
                     html = html.replace("nextbutton", "\"/state/" + next_state + "\"");
                     html = html.replace(", insert_data", "");
@@ -202,77 +199,72 @@ app.get('/state/:selected_state', (req, res) => {
 app.get('/energy/:selected_energy_source', (req, res) => {
     console.log(req.params.selected_energy_source);
     fs.readFile(path.join(template_dir, 'energy.html'), (err, template) => {
-        //Error check for valid energy source
-        if(!sources.includes(req.params.selected_energy_source)){
+        // Error check for valid energy source
+        if (!sources.includes(req.params.selected_energy_source)) {
             res.status(404).type('text/plain').send("Error: this source is invalid: " + req.params.selected_energy_source);
-        }else{
-            //Query statement
-            let sql = 'select * from Consumption group by year, state_abbreviation';
-            //Query request
-            db.all(sql,[],(err,rows) => {
-                if (err){
+        }
+        else {
+            // Query statement
+            let sql = 'select * ' + 
+                      'from Consumption ' + 
+                      'group by year, state_abbreviation';
+
+            // Query request to database
+            db.all(sql, [], (err, rows) => {
+                if (err) {
                     throw err;
                 }
-                else{
-                    //html contains string of energy.html contents
+                else {
+                    // html contains string of energy.html contents
                     let html = template.toString();
+                    let selected_source = req.params.selected_energy_source.toString();
 
-                    //Creating table headers
+                    // Creating table headers
                     let tbl_head = '';
-                    for (let i=0; i<states.length; i++){
-                        tbl_head += "<th>"+states[i]+"</th>"
+                    for (let i = 0; i < states.length; i++) {
+                        tbl_head += "<th>" + states[i] + "</th>";
                     }
+
                     html = html.replace("heading", tbl_head);
                     
-                    let coal_count = 0;
-                    let gas_count = 0;
-                    let nuc_count = 0;
-                    let pat_count = 0;
-                    let ren_count = 0;
-                    let selected_source = req.params.selected_energy_source.toString();
                     let count = 0;
                     let tbl_row = '';
-                    rows.forEach((row)=>{
-                        state_name = row.state_name;
-                        year = row.year;
-                        coal_count += row.coal;
-                        gas_count += row.natural_gas;
-                        nuc_count += row.nuclear;
-                        pat_count += row.petroleum;
-                        ren_count += row.renewable;
-                        total = coal_count + gas_count + nuc_count + pat_count + ren_count;
-
-                        //HTML table additions to template
-                        if (count == 0){
+                    let graph_data = '';
+                    rows.forEach((row) => {
+                        //HTML table and script additions to template
+                        if (count == 0) {
                             tbl_row += "<tr><td>" + row.year + "</td><td>" + row[selected_source.toLowerCase()] + "</td>";
+                            graph_data += "[" + row.year + ", " + row[selected_source.toLowerCase()] + ", ";
                             count ++;
                         }
-                        else if(count == 50) {
+                        else if (count == 50) {
                             tbl_row += "<td>" + row[selected_source.toLowerCase()] + "</td></tr>"
+                            graph_data += row[selected_source.toLowerCase()] + "], ";
                             count = 0;
                         }
-                        else{
+                        else {
                             tbl_row += "<td>" + row[selected_source.toLowerCase()] + "</td>";
+                            graph_data += row[selected_source.toLowerCase()] + ", ";
                             count++;
                         }  
                     });
+                    console.log(graph_data);
+
+                    html = html.replace("insert_data", graph_data);
                     html = html.replace("replace", tbl_row);
 
-                    //Replace statements to fill rest of template
                     let source_idx = sources.indexOf(req.params.selected_energy_source);
                     let prev_source = sources[source_idx - 1];
                     let next_source = sources[source_idx + 1];
-                    if ((source_idx - 1) < 0){
+
+                    if ((source_idx - 1) < 0) {
                         prev_source = sources[4];
                     }
-                    else if((source_idx + 1) > 4){
+                    else if ((source_idx + 1) > 4) {
                         next_source = sources[0];
                     }
-                    html = html.replace("coal_count", "coal_count=" + coal_count);
-                    html = html.replace("natural_gas_count", "natural_gas_count=" + gas_count);
-                    html = html.replace("nuclear_count", "nuclear_count=" + nuc_count);
-                    html = html.replace("petroleum_count", "petroleum_count=" + pat_count);
-                    html = html.replace("renewable_count", "renewable_count=" + ren_count);
+                    
+                    // Replace statements to fill rest of template
                     html = html.replace("energy_source", selected_source);
                     html = html.replace("prevbutton", "\"/energy/" + prev_source + "\"");
                     html = html.replace("nextbutton", "\"/energy/" + next_source + "\"");
