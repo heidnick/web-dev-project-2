@@ -199,12 +199,14 @@ app.get('/state/:selected_state', (req, res) => {
 app.get('/energy/:selected_energy_source', (req, res) => {
     console.log(req.params.selected_energy_source);
     fs.readFile(path.join(template_dir, 'energy.html'), (err, template) => {
+        let html = template.toString();
+
         // Error check for valid energy source
         if (!sources.includes(req.params.selected_energy_source)) {
             res.status(404).type('text/plain').send("Error: this source is invalid: " + req.params.selected_energy_source);
         }
         else {
-            // Query statement
+            // Query statement 1
             let sql = 'select * ' + 
                       'from Consumption ' + 
                       'group by year, state_abbreviation';
@@ -216,7 +218,6 @@ app.get('/energy/:selected_energy_source', (req, res) => {
                 }
                 else {
                     // html contains string of energy.html contents
-                    let html = template.toString();
                     let selected_source = req.params.selected_energy_source.toString();
 
                     // Creating table headers
@@ -229,29 +230,73 @@ app.get('/energy/:selected_energy_source', (req, res) => {
                     
                     let count = 0;
                     let tbl_row = '';
-                    let graph_data = '';
                     rows.forEach((row) => {
                         //HTML table and script additions to template
                         if (count == 0) {
                             tbl_row += "<tr><td>" + row.year + "</td><td>" + row[selected_source.toLowerCase()] + "</td>";
-                            graph_data += "[" + row.year + ", " + row[selected_source.toLowerCase()] + ", ";
                             count ++;
                         }
                         else if (count == 50) {
                             tbl_row += "<td>" + row[selected_source.toLowerCase()] + "</td></tr>"
-                            graph_data += row[selected_source.toLowerCase()] + "], ";
                             count = 0;
                         }
                         else {
                             tbl_row += "<td>" + row[selected_source.toLowerCase()] + "</td>";
-                            graph_data += row[selected_source.toLowerCase()] + ", ";
                             count++;
                         }  
                     });
-                    console.log(graph_data);
+
+                    html = html.replace("replace", tbl_row);
+                }
+            });
+
+            // Query statement 2
+            sql = 'select States.state_name, Consumption.state_abbreviation, Consumption.year, Consumption.' + req.params.selected_energy_source + ' ' + 
+                  'from Consumption ' + 
+                  'inner join States on Consumption.state_abbreviation = States.state_abbreviation ' + 
+                  'order by Consumption.state_abbreviation, year';
+
+            // Query request to database
+            db.all(sql, [], (err, rows) => {
+                if (err) {
+                    throw err;
+                }
+                else {
+                    // html contains string of energy.html contents
+                    let selected_source = req.params.selected_energy_source.toString();
+
+                    let count = 0;
+                    let graph_data = '';
+                    rows.forEach((row) => {
+                        //HTML table and script additions to template
+                        if (count == 0) {
+                            //graph_data += "[" + row.year + ", " + row[selected_source.toLowerCase()] + ", ";
+                            graph_data += "{";
+                            graph_data += "type: \"line\", ";
+                            graph_data += "axisYType: \"secondary\", ";
+                            graph_data += "name: \"" + row.state_name + "\", ";
+                            graph_data += "showInLegend: true, ";
+                            graph_data += "markerSize: 0, ";
+                            graph_data += "yValueFormatString: \"###,###,###\", ";
+                            graph_data += "dataPoints: [ ";
+                            graph_data += "{ x: " + row.year + ", y: " + row[selected_source.toLowerCase()] + " }, ";
+                            count ++;
+                        }
+                        else if (count == 50) {
+                            //graph_data += row[selected_source.toLowerCase()] + "], ";
+                            graph_data += "{ x: " + row.year + ", y: " + row[selected_source.toLowerCase()] + " } ";
+                            graph_data += "]";
+                            graph_data += "}, ";
+                            count = 0;
+                        }
+                        else {
+                            //graph_data += row[selected_source.toLowerCase()] + ", ";
+                            graph_data += "{ x: " + row.year + ", y: " + row[selected_source.toLowerCase()] + " }, ";
+                            count++;
+                        }  
+                    });
 
                     html = html.replace("insert_data", graph_data);
-                    html = html.replace("replace", tbl_row);
 
                     let source_idx = sources.indexOf(req.params.selected_energy_source);
                     let prev_source = sources[source_idx - 1];
@@ -273,7 +318,7 @@ app.get('/energy/:selected_energy_source', (req, res) => {
                     res.status(200).type('html').send(buf);
                 }
             });
-        }       
+        }
     });
 });
 
