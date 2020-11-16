@@ -311,6 +311,8 @@ app.get('/energy/:selected_energy_source', (req, res) => {
                     
                     // Replace statements to fill rest of template
                     html = html.replace("energy_source", selected_source);
+                    html = html.replace("insert_src", "\"/images/energy/" + selected_source + ".jpg\"");
+                    html = html.replace("insert_alt", "\"" + selected_source + "\"");
                     html = html.replace("prevbutton", "\"/energy/" + prev_source + "\"");
                     html = html.replace("nextbutton", "\"/energy/" + next_source + "\"");
                     
