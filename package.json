@@ -8,12 +8,8 @@
     },
     "contributors": [
         {
-            "name": "",
-            "email": ""
-        },
-        {
-            "name": "",
-            "email": ""
+            "name": "Ryan Wenner",
+            "email": "wenn3701@stthomas.edu"
         }
     ],
     "main": "server.js",

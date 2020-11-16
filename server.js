@@ -282,7 +282,7 @@ app.get('/energy/:selected_energy_source', (req, res) => {
                             graph_data += "{ x: " + row.year + ", y: " + row[selected_source.toLowerCase()] + " }, ";
                             count ++;
                         }
-                        else if (count == 50) {
+                        else if (count == 58) {
                             //graph_data += row[selected_source.toLowerCase()] + "], ";
                             graph_data += "{ x: " + row.year + ", y: " + row[selected_source.toLowerCase()] + " } ";
                             graph_data += "]";
