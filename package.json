@@ -3,19 +3,23 @@
     "version": "0.0.0",
     "description": "Dynamic Web Server using Node JS",
     "author": {
-        "name": "",
-        "email": ""
+        "name": "Nick Heid",
+        "email": "heid7732@stthomas.edu"
     },
     "contributors": [
         {
             "name": "Ryan Wenner",
             "email": "wenn3701@stthomas.edu"
+        },
+        {
+            "name": "Nick Heid",
+            "email": "heid7732@stthomas.edu"
         }
     ],
     "main": "server.js",
     "repository": {
         "type": "git",
-        "url": ""
+        "url": "https://github.com/heidnick/web-dev-project-2"
     },
     "dependencies": {
         "express": "^4.17.1",

@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>US Energy Consumption</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <script>
         window.onload = function () {
@@ -47,19 +47,21 @@
 </head>
 <body>
     <!--Will be the navigation bar-->
-    <div>
-        <button><a target="_self" href="/state/MN">State</a></button>
-        <button><a target="_self" href="/year/2018">Year</a></button>
+    <div class="centered">
+        <button class="button"><a target="_self" href="/state/MN">State</a></button>
+        <button class="button"><a target="_self" href="/year/2018">Year</a></button>
     </div>
     <!-- create template here -->
-    <div>
-        <button><a target="_self" href=prevbutton>Previous Source</a></button>
-        <h2>energy_source</h2>
+    <div class="centered">
         <img src=insert_src alt=insert_alt>
-        <button><a target="_self" href=nextbutton>Next Source</a></button>
     </div>
-    <div>
-        <table>
+    <div class="centered">
+        <h2>energy_source</h2>
+        <button class="button"><a target="_self" href=prevbutton>Previous Source</a></button>
+        <button class="button"><a target="_self" href=nextbutton>Next Source</a></button>
+    </div>
+    <div class="centered">
+        <table class="styled-table">
             <thead>
                 <tr>
                 <th>Year</th>
@@ -72,6 +74,7 @@
         </table>
     </div>
     <div id="chartContainer" style="height: 100%; width: 100%;"></div>
+    <div style="height: 900px; background-color: white;"></div>
 </body>
 </html>
 

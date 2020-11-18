@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>US Energy Consumption</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
     <script src="https://cdn.anychart.com/releases/v8/js/anychart-ui.min.js"></script>
     <script src="https://cdn.anychart.com/releases/v8/js/anychart-exports.min.js"></script>
@@ -16,7 +16,6 @@
         #graph_container {
             width: 500px;
             height: 400px;
-            margin: 0;
             padding: 0;
         }
     </style>
@@ -123,19 +122,19 @@
 </head>
 <body>
     <!--Will be the navigation bar-->
-    <div>
-        <button><a target="_self" href="/energy/Coal">Energy</a></button>
-        <button><a target="_self" href="/year/2018">Year</a></button>
+    <div class="centered">
+        <button  class="button"><a target="_self" href="/energy/Coal">Energy</a></button>
+        <button  class="button"><a target="_self" href="/year/2018">Year</a></button>
     </div>
     <!-- create template here -->
-    <div>
-        <button><a target="_self" href=prevbutton>Previous State</a></button>
+    <div class="centered">
+        <button  class="button"><a target="_self" href=prevbutton>Previous State</a></button>
+        <button  class="button"><a target="_self" href=nextbutton>Next State</a></button>
         <h2>insert_state</h2>
         <img src=insert_src alt=insert_alt>
-        <button><a target="_self" href=nextbutton>Next State</a></button>
     </div>
-    <div>
-        <table>
+    <div >
+        <table class="styled-table">
             <thead>
                 <tr>
                 <th>Year</th>
@@ -151,8 +150,7 @@
                 replace
             </tbody>
         </table>
-    </div>
-    <div id="graph_container"></div>
+    <div id="graph_container" stlye="margin: 0;"></div>
 </body>
 </html>
 
