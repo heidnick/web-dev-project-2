@@ -46,7 +46,7 @@ app.get('/year/:selected_year', (req, res) => {
     console.log(req.params.selected_year);
     fs.readFile(path.join(template_dir, 'year.html'), (err, template) => {
         // Error check for valid year request
-        if (req.params.selected_year < 1960 || req.params.selected_year > 2018) {
+        if (req.params.selected_year < 1960 || req.params.selected_year > 2018 || isNaN(req.params.selected_year)) {
             res.status(404).type('text/plain').send("Error: no data for year " + req.params.selected_year);
         }
         else {
@@ -203,7 +203,7 @@ app.get('/energy/:selected_energy_source', (req, res) => {
 
         // Error check for valid energy source
         if (!sources.includes(req.params.selected_energy_source)) {
-            res.status(404).type('text/plain').send("Error: this source is invalid: " + req.params.selected_energy_source);
+            res.status(404).type('text/plain').send("Error: energy source is invalid: " + req.params.selected_energy_source);
         }
         else {
             // Query statement 1
